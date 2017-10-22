@@ -34110,8 +34110,3 @@ return PoorMansTSqlFormatterLib;
 }));
 //end UMD close
 
-
-//test nonsense
-module.exports.myTest = function() {
-  return "Test";
-};
