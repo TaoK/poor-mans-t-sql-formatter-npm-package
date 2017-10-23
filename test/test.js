@@ -9,32 +9,30 @@ const STANDARDFORMATSQLFOLDER = './test/data/StandardFormatSql';
 
 describe('PoorMansTSqlFormatterLib', function() {
 
-  it('Basic test - simple select', function(done) {
+  it('Basic test - simple select, default formatter', function() {
     var result = formatterLib.SqlFormattingManager.DefaultFormat("SELect 1 from there where that");
     assert.equal(result, 'SELECT 1\nFROM there\nWHERE that\n');
-    done();
   });
 
-  // CHECK THIS!!
+  // CSharp Port warning!! substring in JS works differently - the second argument is the end position, NOT the requested string length!
   function getFileConfigString(fileName) {
     var openParens = fileName.indexOf("(");
     if (openParens >= 0) {
       var closeParens = fileName.indexOf(")", openParens);
       if (closeParens >= 0) {
-        return fileName.Substring(openParens + 1, (closeParens - openParens) - 1);
+        return fileName.substring(openParens + 1, closeParens);
       }
       return "";
     }
     return "";
   }
 
-  // CHECK THIS!!
   function stripFileConfigString(fileName) {
     var openParens = fileName.indexOf("(");
     if (openParens >= 0) {
       var closeParens = fileName.indexOf(")", openParens);
       if (closeParens >= 0) {
-        return fileName.Substring(0, openParens) + fileName.Substring(closeParens + 1);
+        return fileName.substring(0, openParens) + fileName.substring(closeParens + 1);
       }
       return fileName;
     }
@@ -52,42 +50,43 @@ describe('PoorMansTSqlFormatterLib', function() {
       var outFormatter = formatters[configString];
       if (!outFormatter)
       {
-        var options = new formatterLib.Formatters.TSqlStandardFormatterOptions(configString);
-        outFormatter = new formatterLib.Formatters.TSqlStandardFormatter(options);
+        var options = new formatterLib.Formatters.TSqlStandardFormatterOptions.$ctor1(configString);
+        outFormatter = new formatterLib.Formatters.TSqlStandardFormatter.$ctor1(options);
         formatters[configString] = outFormatter;
       }
       return outFormatter;
     }
 
-var counter = 0;
-
-    var files = fs.readdirSync(INPUTSQLFOLDER);
+    var files = fs.readdirSync(STANDARDFORMATSQLFOLDER);
     files.forEach(file => {
 
-counter++;
-
-if (counter < 6) {
-
       it('Standard Formatter - Expected Output - ' + file, function(done) {
-        var formatter = getFormatter(getFileConfigString(file));
+
+        var config = getFileConfigString(file);
+        var formatter = getFormatter(config);
 
         fs.readFile(STANDARDFORMATSQLFOLDER + '/' + file, 'utf8', function(err, expectedSql) {
           if (err) throw err;
         
-          fs.readFile(INPUTSQLFOLDER + '/' + stripFileConfigString(file), 'utf8', function(err, inputSql) {
+          expectedSql = expectedSql.replace(/\r\n/g, "\n").replace(/^\uFEFF/g, "");
+
+          var simplefilename = stripFileConfigString(file);
+
+          fs.readFile(INPUTSQLFOLDER + '/' + simplefilename, 'utf8', function(err, inputSql) {
             if (err) throw err;
           
+            inputSql = inputSql.replace(/\r\n/g, "\n").replace(/^\uFEFF/g, "");
+
             var tokenized = tokenizer.TokenizeSQL(inputSql);
             var parsed = parser.ParseSQL(tokenized);
             var formatted = formatter.FormatSQLTree(parsed);
             
-            assert.equal(expectedSql.replace(/\r\n/g, "\n").replace(/\uFEFF/g, ""), formatted);
+            assert.equal(expectedSql, formatted);
             done();
           });
         });
         
       });
-}
 
     });
 

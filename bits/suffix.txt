@@ -1,0 +1,7 @@
+//End PASTED CONTENT from Poor Man's T-SQL Formatter project (transpiled C# to JS via Bridge.Net)
+
+//UMD close
+return PoorMansTSqlFormatterLib;
+}));
+//end UMD close
+

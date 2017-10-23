@@ -34,8 +34,10 @@ Given that this module is mostly wrapping over the original code at
 https://github.com/TaoK/PoorMansTSqlFormatter, there is little opportunity for 
 contributing here - but any input is of course welcome!
 
-This is my first (and probably only) npm module, so any comments on form/standards 
-are most welcome!
+To produce/refresh the npm library file (index.js) just run the build.sh script.
+When executed from the root of the project, it will simply collect the files from 
+the parent project in github and add the wrapper code defined in prefix and suffix 
+files.
 
 ## STATUS
 
@@ -45,3 +47,16 @@ When it is, I'll see if I can take care of all those trendy things like:
 * CI & test tracking
 * coverage tracking
 * (anything else?)
+
+Before it gets there, I have some stuff to sort out here:
+* Fix some of the artifacts of transpilation, like "$ctor" methods for constructors
+** Probably by re-exposing some objects manually/explicitly
+* Clean up existing tests
+** move util functions out of tests body
+** clean up openparens/closeparens duplication
+** find a cleaner way of loading file contents accounting for encoding and linebreaks
+** find a better pattern than "if (err) throw err" for node fs module error-propagation
+
+Eventually, probably once the library has been published and shows some sign of interest/activity, I'll go for the bigger stuff
+* look for perf opportunities. 8s is a LONG time for some simple tests!! (C# equivalent is 1s) - otherwise DOCUMENT the terrible performance...
+

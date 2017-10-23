@@ -1,0 +1,16 @@
+'use strict';
+
+//UMD intro
+(function (root, factory) {
+	if (typeof define === 'function' && define.amd) {
+		define("PoorMansTSqlFormatterLib", [], factory);
+	} else if (typeof module === 'object' && module.exports) {
+		module.exports = factory();
+	} else {
+		root.PoorMansTSqlFormatterLib = factory();
+	}
+}(this, function () {
+//end UMD intro
+
+
+//Begin PASTED CONTENT from Poor Man's T-SQL Formatter project (transpiled C# to JS via Bridge.Net)
