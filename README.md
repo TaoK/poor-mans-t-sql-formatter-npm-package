@@ -51,11 +51,6 @@ When it is, I'll see if I can take care of all those trendy things like:
 Before it gets there, I have some stuff to sort out here:
 * Fix some of the artifacts of transpilation, like "$ctor" methods for constructors
 ** Probably by re-exposing some objects manually/explicitly
-* Clean up existing tests
-** move util functions out of tests body
-** clean up openparens/closeparens duplication
-** find a cleaner way of loading file contents accounting for encoding and linebreaks
-** find a better pattern than "if (err) throw err" for node fs module error-propagation
 
 Eventually, probably once the library has been published and shows some sign of interest/activity, I'll go for the bigger stuff
 * look for perf opportunities. 8s is a LONG time for some simple tests!! (C# equivalent is 1s) - otherwise DOCUMENT the terrible performance...
