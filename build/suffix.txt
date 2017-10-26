@@ -1,7 +1,187 @@
 //End PASTED CONTENT from Poor Man's T-SQL Formatter project (transpiled C# to JS via Bridge.Net)
 
-//UMD close
-return PoorMansTSqlFormatterLib;
+//UMD close - this is where we define any non-mechanical C#-transpilation aspects of the NPM library
+
+//Primarily we will expose a "format" method, with options. Later, we can worry about exposing 
+// interesting stuff like the parse tree. I don't think there are many people who find it 
+// interesting anyway (and it's going to change in v2)
+
+//First, produce a clean "option set" that can be used as key to a cache of formatters
+
+const optionReference = {
+  includeText:               {type: 'bool',   default: true,           context: 'library' },
+  includeHtml:               {type: 'bool',   default: false,          context: 'library' },
+  includeHtmlPage:           {type: 'bool',   default: false,          context: 'library' },
+  includeTokenList:          {type: 'bool',   default: false,          context: 'library' },
+  includeParseTree:          {type: 'bool',   default: false,          context: 'library' },
+  abortOnError:              {type: 'bool',   default: true,           context: 'commandline' },
+  formattingType:            {type: 'enum',   default: 'standard',     options: ['standard', 'identity', 'obfuscation']},
+  indent:                    {type: 'string', default: '\t',           appliesToFormattingType: ['standard'] },
+  spacesPerTab:              {type: 'int',    default: 4,              appliesToFormattingType: ['standard'] },
+  maxLineWidth:              {type: 'int',    default: 999,            appliesToFormattingType: ['standard'] },
+  statementBreaks:           {type: 'int',    default: 2,              appliesToFormattingType: ['standard'] },
+  clauseBreaks:              {type: 'int',    default: 1,              appliesToFormattingType: ['standard'] },
+  expandCommaLists:          {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
+  trailingCommas:            {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
+  spaceAfterExpandedComma:   {type: 'bool',   default: false,          appliesToFormattingType: ['standard'] },
+  expandBooleanExpressions:  {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
+  expandCaseStatements:      {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
+  expandBetweenConditions:   {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
+  expandInLists:             {type: 'bool',   default: false,          appliesToFormattingType: ['standard'] },
+  breakJoinOnSections:       {type: 'bool',   default: false,          appliesToFormattingType: ['standard'] },
+  uppercaseKeywords:         {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
+  coloring:                  {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
+  keywordStandardization:    {type: 'bool',   default: false,          appliesToFormattingType: ['standard'] },
+  randomizeKeywordCase:      {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'] },
+  randomizeColor:            {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'] },
+  randomizeLineLengths:      {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'] },
+  preserveComments:          {type: 'bool',   default: true,           appliesToFormattingType: ['obfuscation'] },
+  enableKeywordSubstitution: {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'] },
+  errorOutputPrefix:         {type: 'string' }
+}
+
+function mapArbitraryOptionsInputToStandardSet(optionInput, outputType) {
+  var optionSet = {};
+
+  optionSet.outputType       = outputType;
+  optionSet.errorOutputPrefix = optionInput.errorOutputPrefix; //the default is defined in the C# lib
+
+  if (optionInput.formattingType && optionReference.formattingType.options.indexOf(optionInput.formattingType) == -1)
+    throw new Error("Invalid 'formattingtype' provided.");
+    
+  optionSet.formattingType = optionInput.formattingType || 'standard';
+
+  //populate appropriate options and defaults
+  for (var optionName in optionReference) {
+    if (optionReference[optionName].appliesToFormattingType
+        && optionReference[optionName].appliesToFormattingType.indexOf(optionSet.formattingType) >= 0)
+        {
+      switch (optionReference[optionName].type) {
+        case 'string':
+        case 'int':
+          optionSet[optionName] = optionInput[optionName] || optionReference[optionName].default;
+          break;
+        case 'bool':
+          if (optionReference[optionName].default)
+            optionSet[optionName] = optionInput[optionName] !== false;
+          else
+            optionSet[optionName] = !!optionInput[optionName];
+          break;
+      }
+    }
+  }
+
+  //correct coloring options for output type
+  if (outputType != 'html' && outputType != 'htmlPage') {
+    if(optionSet.formattingType == 'standard')
+      optionSet.coloring = false;
+    else if(optionSet.formattingType == 'obfuscation')
+      optionSet.randomizeColor = false;
+  }
+
+  return optionSet;
+}
+
+function createFormatterForOptionSet(optionSet) {
+
+  var formatter;
+
+  switch (optionSet.formattingType) {
+    case 'standard':
+      var stdOptions = new PoorMansTSqlFormatterLib.Formatters.TSqlStandardFormatterOptions();
+      stdOptions.IndentString             = optionSet.indent;
+      stdOptions.SpacesPerTab             = optionSet.spacesPerTab;
+      stdOptions.MaxLineWidth             = optionSet.maxLineWidth;
+      stdOptions.NewStatementLineBreaks   = optionSet.statementBreaks;
+      stdOptions.NewClauseLineBreaks      = optionSet.clauseBreaks;
+      stdOptions.ExpandCommaLists         = optionSet.expandCommaLists;
+      stdOptions.TrailingCommas           = optionSet.trailingCommas;
+      stdOptions.SpaceAfterExpandedComma  = optionSet.spaceAfterExpandedComma;
+      stdOptions.ExpandBooleanExpressions = optionSet.expandBooleanExpressions;
+      stdOptions.ExpandCaseStatements     = optionSet.expandCaseStatements;
+      stdOptions.ExpandBetweenConditions  = optionSet.expandBetweenConditions;
+      stdOptions.ExpandInLists            = optionSet.expandInLists;
+      stdOptions.BreakJoinOnSections      = optionSet.breakJoinOnSections;
+      stdOptions.UppercaseKeywords        = optionSet.uppercaseKeywords;
+      stdOptions.HTMLColoring             = optionSet.coloring;
+      stdOptions.KeywordStandardization   = optionSet.keywordStandardization;
+      formatter = new PoorMansTSqlFormatterLib.Formatters.TSqlStandardFormatter.$ctor1(stdOptions);
+      break;
+    case 'identity':
+      formatter = new PoorMansTSqlFormatterLib.Formatters.TSqlIdentityFormatter.$ctor1(optionSet.enableHtmlOutput);
+      break;
+    case 'obfuscation':
+      formatter = new PoorMansTSqlFormatterLib.Formatters.TSqlObfuscatingFormatter.$ctor1(
+        optionSet.randomizeKeywordCase,
+        optionSet.randomizeColor,
+        optionSet.randomizeLineLengths,
+        optionSet.preserveComments,
+        optionSet.enableKeywordSubstitution
+        );
+      break;
+    default:
+      throw new Error("Unexpected error: invalid formattingType in optionSet.");
+  }
+
+  if(optionSet.errorOutputPrefix)
+    formatter.ErrorOutputPrefix = optionSet.errorOutputPrefix;
+
+  if (optionSet.outputType == "htmlPage")
+    return new PoorMansTSqlFormatterLib.Formatters.HtmlPageWrapper(formatter);
+  else
+    return formatter;
+}
+
+var formatters = {}; //collection of however many configurations are invoked.
+
+function getFormatter(optionInput, outputType) {
+  var optionSet = mapArbitraryOptionsInputToStandardSet(optionInput, outputType);
+  var optionSetText = JSON.stringify(optionSet);
+  var formatter = formatters[optionSetText];
+  if (!formatter) {
+    formatter = createFormatterForOptionSet(optionSet);
+    formatters[optionSetText] = formatter;
+  }
+  return formatter
+}
+
+
+var tokenizer; //singleton, but lazy-loaded
+var parser; //singleton, but lazy-loaded
+
+function formatSql(inputSql, options) {
+  options = options || {};
+  tokenizer = tokenizer || new PoorMansTSqlFormatterLib.Tokenizers.TSqlStandardTokenizer();
+  parser    = parser    || new PoorMansTSqlFormatterLib.Parsers.TSqlStandardParser();
+
+  var result = {};
+
+  var tokenizedData = tokenizer.TokenizeSQL(inputSql);
+  var parsedData = parser.ParseSQL(tokenizedData);
+
+  if (options.includeText !== false)
+    result.text = getFormatter(options, 'text').FormatSQLTree(parsedData);
+
+  if (!!options.includeHtml)
+    result.html = getFormatter(options, 'html').FormatSQLTree(parsedData);
+
+  if (!!options.includeHtmlPage)
+    result.htmlPage = getFormatter(options, 'htmlPage').FormatSQLTree(parsedData);
+
+  if (!!options.includeTokenList)
+    result.tokenList = JSON.stringify(tokenizedData);
+
+  if (!!options.includeParseTree)
+    result.parseTree = JSON.stringify(parsedData);
+
+  result.errorFound = parsedData.GetAttributeValue("errorFound") == "1";
+
+  return result;
+}
+
+return {
+  formatSql: formatSql
+  };
 }));
 //end UMD close
 
