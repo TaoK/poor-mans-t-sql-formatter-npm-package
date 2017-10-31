@@ -34121,36 +34121,35 @@ Bridge.assembly("PoorMansTSqlFormatterJS", function ($asm, globals) {
 //First, produce a clean "option set" that can be used as key to a cache of formatters
 
 const optionReference = {
-  includeText:               {type: 'bool',   default: true,           context: 'library' },
-  includeHtml:               {type: 'bool',   default: false,          context: 'library' },
-  includeHtmlPage:           {type: 'bool',   default: false,          context: 'library' },
-  includeTokenList:          {type: 'bool',   default: false,          context: 'library' },
-  includeParseTree:          {type: 'bool',   default: false,          context: 'library' },
-  abortOnError:              {type: 'bool',   default: true,           context: 'commandline' },
-  formattingType:            {type: 'enum',   default: 'standard',     options: ['standard', 'identity', 'obfuscation']},
-  indent:                    {type: 'string', default: '\t',           appliesToFormattingType: ['standard'] },
-  spacesPerTab:              {type: 'int',    default: 4,              appliesToFormattingType: ['standard'] },
-  maxLineWidth:              {type: 'int',    default: 999,            appliesToFormattingType: ['standard'] },
-  statementBreaks:           {type: 'int',    default: 2,              appliesToFormattingType: ['standard'] },
-  clauseBreaks:              {type: 'int',    default: 1,              appliesToFormattingType: ['standard'] },
-  expandCommaLists:          {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
-  trailingCommas:            {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
-  spaceAfterExpandedComma:   {type: 'bool',   default: false,          appliesToFormattingType: ['standard'] },
-  expandBooleanExpressions:  {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
-  expandCaseStatements:      {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
-  expandBetweenConditions:   {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
-  expandInLists:             {type: 'bool',   default: false,          appliesToFormattingType: ['standard'] },
-  breakJoinOnSections:       {type: 'bool',   default: false,          appliesToFormattingType: ['standard'] },
-  uppercaseKeywords:         {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
-  coloring:                  {type: 'bool',   default: true,           appliesToFormattingType: ['standard'] },
-  keywordStandardization:    {type: 'bool',   default: false,          appliesToFormattingType: ['standard'] },
-  randomizeKeywordCase:      {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'] },
-  randomizeColor:            {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'] },
-  randomizeLineLengths:      {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'] },
-  preserveComments:          {type: 'bool',   default: true,           appliesToFormattingType: ['obfuscation'] },
-  enableKeywordSubstitution: {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'] },
-  errorOutputPrefix:         {type: 'string' }
-}
+  includeText:               {type: 'bool',   default: true,                                                             description: "The formatted SQL should be included in the result as a Text value/property" },
+  includeHtml:               {type: 'bool',   default: false,                                                            description: "The formatted SQL should be included in the result as HTML" },
+  includeHtmlPage:           {type: 'bool',   default: false,                                                            description: "The formatted SQL should be included in the result as a full HTML document" },
+  includeTokenList:          {type: 'bool',   default: false,                                                            description: "The Token List produced from the Tokenization phase should be included" },
+  includeParseTree:          {type: 'bool',   default: false,                                                            description: "The Parse Tree produced from the Parsing phase should be included" },
+  formattingType:            {type: 'enum',   default: 'standard',     options: ['standard', 'identity', 'obfuscation'], description: "What kind of formatting to do - 'standard', 'identity' or 'obfuscation'" },
+  indent:                    {type: 'string', default: '\\t',          appliesToFormattingType: ['standard'],            description: "The unit of indentation - typically a tab (\\t) or a number of spaces" },
+  spacesPerTab:              {type: 'int',    default: 4,              appliesToFormattingType: ['standard'],            description: "This is used to measure line length, and only applies if you use tabs" },
+  maxLineWidth:              {type: 'int',    default: 999,            appliesToFormattingType: ['standard'],            description: "Request that the formatter wrap long lines to avoid exceeding this line length" },
+  statementBreaks:           {type: 'int',    default: 2,              appliesToFormattingType: ['standard'],            description: "How many linebreaks should be added when starting a new statement?" },
+  clauseBreaks:              {type: 'int',    default: 1,              appliesToFormattingType: ['standard'],            description: "How many linebreaks should be added when starting a new clause within a statement?" },
+  expandCommaLists:          {type: 'bool',   default: true,           appliesToFormattingType: ['standard'],            description: "Should comma-delimited lists (columns, group by args, etc) be broken out onto new lines?" },
+  trailingCommas:            {type: 'bool',   default: true,           appliesToFormattingType: ['standard'],            description: "When starting a new line because of a comma, should the comma be at the end of line (VS the start of the next)?" },
+  spaceAfterExpandedComma:   {type: 'bool',   default: false,          appliesToFormattingType: ['standard'],            description: "Should a space be added after the comma? (typically not if they are 'trailing')" },
+  expandBooleanExpressions:  {type: 'bool',   default: true,           appliesToFormattingType: ['standard'],            description: "Should boolean operators (AND, OR) cause a linebreak?" },
+  expandCaseStatements:      {type: 'bool',   default: true,           appliesToFormattingType: ['standard'],            description: "Should CASE expressions have their WHEN and THEN expressions be broken out on new lines?" },
+  expandBetweenConditions:   {type: 'bool',   default: true,           appliesToFormattingType: ['standard'],            description: "Should BETWEEN expressions have the max argument broken out on a new line?" },
+  expandInLists:             {type: 'bool',   default: false,          appliesToFormattingType: ['standard'],            description: "Should IN() lists have each argument on a new line?" },
+  breakJoinOnSections:       {type: 'bool',   default: false,          appliesToFormattingType: ['standard'],            description: "Should the ON section of a JOIN clause be broken out onto its own line?" },
+  uppercaseKeywords:         {type: 'bool',   default: true,           appliesToFormattingType: ['standard'],            description: "Should T-SQL keywords (like SELECT, FROM) be automatically uppercased?" },
+  coloring:                  {type: 'bool',   default: true,           appliesToFormattingType: ['standard'],            description: "(In HTML output, if enabled) should keywords, comments etc have distinct color classes?" },
+  keywordStandardization:    {type: 'bool',   default: false,          appliesToFormattingType: ['standard'],            description: "Should the ON section of a JOIN clause be broken out onto its own line?" },
+  randomizeKeywordCase:      {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'],         description: "Should the case of keywords be randomized, to minimize legibility?" },
+  randomizeColor:            {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'],         description: "(In HTML output, if enabled) should the color of the SQL text be randomly varied?" },
+  randomizeLineLengths:      {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'],         description: "Should the SQL be wrapped at arbitrary intervals, to minimize legibility?" },
+  preserveComments:          {type: 'bool',   default: true,           appliesToFormattingType: ['obfuscation'],         description: "Should comments in the code be retained (vs being stripped out)?" },
+  enableKeywordSubstitution: {type: 'bool',   default: false,          appliesToFormattingType: ['obfuscation'],         description: "Should keywords with synonyms use less common forms? (NOTE: only safe for T-SQL!)" },
+  errorOutputPrefix:         {type: 'string',                                                                            description: "Text to be included (in a comment at the top) if parsing failed and result is therefore suspect" }
+};
 
 function mapArbitraryOptionsInputToStandardSet(optionInput, outputType) {
   var optionSet = {};
@@ -34292,7 +34291,8 @@ function formatSql(inputSql, options) {
 }
 
 return {
-  formatSql: formatSql
+  formatSql: formatSql,
+  optionReference: optionReference
   };
 }));
 //end UMD close

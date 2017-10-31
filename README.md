@@ -63,12 +63,12 @@ Standard formatter options:
 | Option                   | Description                                                                              | Type   | Default    |
 | ---                      | ---                                                                                      | ---    | ---        |
 | indent                   | The unit of indentation - typically a tab (\t) or a number of spaces                     | string | \t         |
-| spacesPerTab             | This is used to measure line length, and only applies if you use tabs                    | int    | 4          |
 | maxLineWidth             | Request that the formatter wrap long lines to avoid exceeding this line length           | int    | 999        |
+| spacesPerTab             | This is used to measure line length, and only applies if you use tabs                    | int    | 4          |
 | statementBreaks          | How many linebreaks should be added when starting a new statement?                       | int    | 2          |
 | maxLineWidth             | How many linebreaks should be added when starting a new clause within a statement?       | int    | 1          |
 | expandCommaLists         | Should comma-delimited lists (columns, group by args, etc) be broken out onto new lines? | bool   | true       |
-| trailingCommas           | When starting a new line because of a comma-delimited entry, should the comma be at the end of the first line or the start of the next? | bool   | true       |
+| trailingCommas           | When starting a new line because of a comma, should the comma be at the end of line (VS the start of the next)? | bool   | true       |
 | spaceAfterExpandedComma  | Should a space be added after the comma? (typically not if they are "trailing")          | bool   | false      |
 | expandBooleanExpressions | Should boolean operators (AND, OR) cause a linebreak?                                    | bool   | true       |
 | expandCaseStatements     | Should CASE expressions have their WHEN and THEN expressions be broken out on new lines? | bool   | true       |
@@ -76,7 +76,7 @@ Standard formatter options:
 | expandInLists            | Should IN() lists have each argument on a new line?                                      | bool   | false      |
 | breakJoinOnSections      | Should the ON section of a JOIN clause be broken out onto its own line?                  | bool   | false      |
 | uppercaseKeywords        | Should T-SQL keywords (like SELECT, FROM) be automatically uppercased?                   | bool   | true       |
-| coloring                 | (If HTML output is enabled) should keywords, comments etc have distinct color classes?   | bool   | true       |
+| coloring                 | (In HTML output, if enabled) should keywords, comments etc have distinct color classes?  | bool   | true       |
 | keywordStandardization   | Should the ON section of a JOIN clause be broken out onto its own line?                  | bool   | false      |
 
 Obfuscating formatter options:
@@ -84,14 +84,16 @@ Obfuscating formatter options:
 | Option                    | Description                                                                              | Type   | Default    |
 | ---                       | ---                                                                                      | ---    | ---        |
 | randomizeKeywordCase      | Should the case of keywords be randomized, to minimize legibility?                       | bool   | false      |
-| randomizeColor            | (If HTML output is enabled) should the color of the SQL text be randomized, to minimize legibility? | bool   | false      |
+| randomizeColor            | (In HTML output, if enabled) should the color of the SQL text be randomly varied?        | bool   | false      |
 | randomizeLineLengths      | Should the SQL be wrapped at arbitrary intervals, to minimize legibility?                | bool   | false      |
-| preserveComments          | Should comments in the code be retained, or stripped out?                                | bool   | true       |
-| enableKeywordSubstitution | Should keywords in the code be replaced with less-recognizable but equivalent alternatives? (NOTE: only safe for T-SQL, not other flavors!) | bool   | true       |
+| preserveComments          | Should comments in the code be retained (vs being stripped out)?                         | bool   | true       |
+| enableKeywordSubstitution | Should keywords with synonyms use less common forms? (NOTE: only safe for T-SQL!)        | bool   | false      |
 
 ## Tests
 
  `npm test`
+
+(please note, coverage is not yet up to scratch; the general goal is to address the same test cases as the C# library)
 
 ## License
 
