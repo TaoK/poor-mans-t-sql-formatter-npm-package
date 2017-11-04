@@ -19,6 +19,10 @@ original**. I haven't investigated exactly why yet, but I don't hold high hopes 
 this changing anytime soon. If you need to deal with large sets of files and 
 performance matters, you will likely want to look at the C#/mono library/project.
 
+Please note, there is a **command-line utility** for node/npm also, but **it is in a 
+separate npm package**, poor-mans-t-sql-formatter-cli 
+(github: https://github.com/TaoK/poor-mans-t-sql-formatter-npm-cli)
+
 ## Installation
 
  `npm install poor-mans-t-sql-formatter`
@@ -118,10 +122,6 @@ When it is published, I'll see if I can take care of all those trendy things lik
 * CI & test tracking
 * coverage tracking
 * a suitable "try it out" link
-* a detailed NPM description/page (from the readme.md if possible)
-* a (node-based) command-line formatting utility (separate NPM package, to avoid burdening this one with dependencies)
-** Checking / understanding the handling of piped input and output encoding in node
-** Establishing an argument-handling strategy, using args, command-line-args, commander, or something similar
 * Think about restructuring the library into a "legacylib" file (using prefix/suffix build process) and a new stuff file.
 * (anything else?)
 
