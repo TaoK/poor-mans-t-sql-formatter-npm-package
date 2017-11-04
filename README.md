@@ -70,7 +70,7 @@ Standard formatter options:
 | maxLineWidth             | Request that the formatter wrap long lines to avoid exceeding this line length           | int    | 999        |
 | spacesPerTab             | This is used to measure line length, and only applies if you use tabs                    | int    | 4          |
 | statementBreaks          | How many linebreaks should be added when starting a new statement?                       | int    | 2          |
-| maxLineWidth             | How many linebreaks should be added when starting a new clause within a statement?       | int    | 1          |
+| clauseBreaks             | How many linebreaks should be added when starting a new clause within a statement?       | int    | 1          |
 | expandCommaLists         | Should comma-delimited lists (columns, group by args, etc) be broken out onto new lines? | bool   | true       |
 | trailingCommas           | When starting a new line because of a comma, should the comma be at the end of line (VS the start of the next)? | bool   | true       |
 | spaceAfterExpandedComma  | Should a space be added after the comma? (typically not if they are "trailing")          | bool   | false      |
