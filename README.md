@@ -81,7 +81,7 @@ Standard formatter options:
 | breakJoinOnSections      | Should the ON section of a JOIN clause be broken out onto its own line?                  | bool   | false      |
 | uppercaseKeywords        | Should T-SQL keywords (like SELECT, FROM) be automatically uppercased?                   | bool   | true       |
 | coloring                 | (In HTML output, if enabled) should keywords, comments etc have distinct color classes?  | bool   | true       |
-| keywordStandardization   | Should the ON section of a JOIN clause be broken out onto its own line?                  | bool   | false      |
+| keywordStandardization   | Should less-common T-SQL keywords be replaced with their standard counterparts? (NOTE: only safe for T-SQL!) | bool   | false      |
 
 Obfuscating formatter options:
 
