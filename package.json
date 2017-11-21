@@ -1,6 +1,6 @@
 {
   "name": "poor-mans-t-sql-formatter",
-  "version": "1.6.5",
+  "version": "1.6.10",
   "description": "A T-SQL formatting library in JS, transpiled from the C# library of the same name",
   "main": "index.js",
   "scripts": {
