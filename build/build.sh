@@ -5,15 +5,9 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 #First wget call is just to check we have access to the site; otherwise we'd wipe out index.js and leave it half-constructed.
-wget -qO- https://raw.githubusercontent.com/TaoK/PoorMansTSqlFormatter/master/PoorMansTSqlFormatterWebDemo/JSLibReference/bridge.js > /dev/null &&
+wget -qO- https://raw.githubusercontent.com/TaoK/PoorMansTSqlFormatter/master/PoorMansTSqlFormatterWebDemo/JSLibReference/Release/PoorMansTSqlFormatterJS.js > /dev/null &&
 cat "$DIR/prelude.txt" > "$DIR/../index.js" &&
 echo >> "$DIR/../index.js" &&
-wget -qO- https://raw.githubusercontent.com/TaoK/PoorMansTSqlFormatter/master/PoorMansTSqlFormatterWebDemo/JSLibReference/bridge.js >> "$DIR/../index.js" &&
-echo >> "$DIR/../index.js" &&
-wget -qO- https://raw.githubusercontent.com/TaoK/PoorMansTSqlFormatter/master/PoorMansTSqlFormatterWebDemo/JSLibReference/bridge.meta.js >> "$DIR/../index.js" &&
-echo >> "$DIR/../index.js" &&
-wget -qO- https://raw.githubusercontent.com/TaoK/PoorMansTSqlFormatter/master/PoorMansTSqlFormatterWebDemo/JSLibReference/PoorMansTSqlFormatterJS.js >> "$DIR/../index.js" &&
-echo >> "$DIR/../index.js" &&
-wget -qO- https://raw.githubusercontent.com/TaoK/PoorMansTSqlFormatter/master/PoorMansTSqlFormatterWebDemo/JSLibReference/PoorMansTSqlFormatterJS.meta.js >> "$DIR/../index.js" &&
+wget -qO- https://raw.githubusercontent.com/TaoK/PoorMansTSqlFormatter/master/PoorMansTSqlFormatterWebDemo/JSLibReference/Release/PoorMansTSqlFormatterJS.js >> "$DIR/../index.js" &&
 echo >> "$DIR/../index.js" &&
 cat "$DIR/suffix.txt" >> "$DIR/../index.js"
